@@ -34,6 +34,10 @@ end
 
 group :development, :test do
   gem 'rspec-rails', '~> 2.0'
+  gem 'tapp'
+  gem 'factory_girl_rails'
+  gem 'forgery'
+  gem 'timecop'
 end
 
 # Use ActiveModel has_secure_password
