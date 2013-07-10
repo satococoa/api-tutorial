@@ -3,6 +3,11 @@
 
 RailsAdmin.config do |config|
 
+  config.authorize_with do
+    authenticate_or_request_with_http_basic('Admin page') do |username, password|
+      username == 'admin' && password == 'password'
+    end
+  end
 
   ################  Global configuration  ################
 
