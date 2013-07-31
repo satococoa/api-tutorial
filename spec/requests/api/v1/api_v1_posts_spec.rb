@@ -102,4 +102,17 @@ describe "Api::V1::Posts" do
       end
     end
   end
+
+  describe "DELETE /api/v1/posts/:id" do
+    let!(:post) { FactoryGirl.create(:post) }
+
+    it "200 が返る" do
+      delete api_v1_post_path(post)
+      expect(response.status).to eq(200)
+    end
+
+    it "1 つ投稿が減る" do
+      expect { delete api_v1_post_path(post) }.to change { Post.count }.by(-1)
+    end
+  end
 end
