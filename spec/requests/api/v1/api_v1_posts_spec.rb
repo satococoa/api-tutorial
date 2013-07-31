@@ -62,4 +62,44 @@ describe "Api::V1::Posts" do
       end
     end
   end
+
+  describe "PATCH /api/v1/posts/:id" do
+    let(:params) {
+      {post: post_param, format: :json}
+    }
+    let(:post) { FactoryGirl.create(:post) }
+
+    context "正しいパラメータが送られたとき" do
+      let(:post_param) { FactoryGirl.attributes_for(:post) }
+
+      it "201 が返る" do
+        patch api_v1_post_path(post), params
+        expect(response.status).to eq(201)
+      end
+
+      it "投稿が更新される" do
+        patch api_v1_post_path(post), params
+        expect(Post.find(post.id).title).to eq(post_param[:title])
+      end
+    end
+
+    context "不正なパラメータが送られたとき" do
+      let(:post_param) { FactoryGirl.attributes_for(:post, title: 'a') }
+
+      it "422 が返る" do
+        patch api_v1_post_path(post), params
+        expect(response.status).to eq(422)
+      end
+
+      it "投稿が更新されない" do
+        patch api_v1_post_path(post), params
+        expect(Post.find(post.id).title).to eq(post.title)
+      end
+
+      it "エラーメッセージがbodyに含まれる" do
+        patch api_v1_post_path(post), params
+        expect(response.body).not_to be_empty
+      end
+    end
+  end
 end
