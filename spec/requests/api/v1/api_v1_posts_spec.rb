@@ -25,4 +25,41 @@ describe "Api::V1::Posts" do
       end
     end
   end
+
+  describe "POST /api/v1/posts" do
+    let(:params) {
+      {post: post_param, format: :json}
+    }
+
+    context "正しいパラメータが送られたとき" do
+      let(:post_param) { FactoryGirl.attributes_for(:post) }
+
+      it "201 が返る" do
+        post api_v1_posts_path, params
+        expect(response.status).to eq(201)
+      end
+
+      it "1 つ投稿が増える" do
+        expect { post api_v1_posts_path, params }.to change { Post.count }.by(1)
+      end
+    end
+
+    context "不正なパラメータが送られたとき" do
+      let(:post_param) { FactoryGirl.attributes_for(:post, title: 'a') }
+
+      it "422 が返る" do
+        post api_v1_posts_path, params
+        expect(response.status).to eq(422)
+      end
+
+      it "投稿は増えない" do
+        expect { post api_v1_posts_path, params }.not_to change { Post.count }
+      end
+
+      it "エラーメッセージがbodyに含まれる" do
+        post api_v1_posts_path, params
+        expect(response.body).not_to be_empty
+      end
+    end
+  end
 end
